@@ -1,10 +1,28 @@
+<script>
+export default {
+  data() {
+    return {}
+  },
+  methods: {
+    isLoggined() {
+      return sessionStorage.getItem('username')
+    },
+    quit() {
+      sessionStorage.clear()
+      this.$forceUpdate()
+    }
+  }
+}
+</script>
+
 <template>
   <div class="header">
-    <button @click="$router.push({ name: 'chat' })" class="button left-button">CHAT</button>
+    <button @click="$router.push({ name: 'left-bar' })" class="button left-button">CHAT</button>
     <div class="right-side">
       <button @click="$router.push({ name: 'register' })">Registration</button>
 
-      <button @click="$router.push({ name: 'sign-in' })">Login</button>
+      <button v-if="!isLoggined()" @click="$router.push({ name: 'sign-in' })">Login</button>
+      <button v-else @click="quit()">Quit</button>
     </div>
   </div>
 </template>

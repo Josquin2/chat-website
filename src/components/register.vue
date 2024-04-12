@@ -23,6 +23,7 @@ export default {
           },
           body: JSON.stringify({ username, pass: this.password })
         })
+        sessionStorage.setItem('username', this.username)
         this.$router.push({ name: 'user', params: { username: this.username } })
       }
     }

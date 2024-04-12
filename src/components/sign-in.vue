@@ -15,6 +15,7 @@ export default {
         const data = await resp.json()
         for (let item of data) {
           if (item.username == this.username && item.pass == this.password) {
+            sessionStorage.setItem('username', this.username)
             this.$router.push({ name: 'user', params: { username: this.username } })
           } else {
             // warning wrong password or username
@@ -107,3 +108,4 @@ button {
   cursor: pointer;
 }
 </style>
+./sign-in.vue
