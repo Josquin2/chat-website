@@ -19,7 +19,7 @@ export default {
   <div class="header">
     <button @click="$router.push({ name: 'left-bar' })" class="button left-button">CHAT</button>
     <div class="right-side">
-      <button @click="$router.push({ name: 'register' })">Registration</button>
+      <button v-if="!isLoggined()" @click="$router.push({ name: 'register' })">Registration</button>
 
       <button v-if="!isLoggined()" @click="$router.push({ name: 'sign-in' })">Login</button>
       <button v-else @click="quit()">Quit</button>

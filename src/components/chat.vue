@@ -7,25 +7,27 @@ export default {
     return {
       prevName: 'Choose your friend!',
       currentText: '',
-      messages: [],
-      data: {}
+      allMessages: [],
+      user: sessionStorage.getItem('username')
     }
   },
   methods: {
     async sendMessage() {
-      if (this.name != 'Choose your friend!' && sessionStorage.getItem('username') != null) {
+      if (this.name != 'Choose your friend!' && this.user != null) {
         const resp = await fetch('https://2c43ac71b0e719c8.mokky.dev/messages', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            from: sessionStorage.getItem('username'),
+            from: this.user,
             to: this.name,
             msg: this.currentText
           })
         })
-        this.messages.push(this.currentText)
+
+        this.allMessages.push({ from: this.user, to: this.name, msg: this.currentText })
+
         this.currentText = ''
       } else {
         console.log('choose name and login!')
@@ -39,12 +41,14 @@ export default {
   },
   watch: {
     async name() {
-      this.messages = []
+      this.allMessages = []
       const resp = await fetch('https://2c43ac71b0e719c8.mokky.dev/messages')
       const data = await resp.json()
       for (let msg of data) {
-        if (msg.from == sessionStorage.getItem('username') && msg.to == this.name) {
-          this.messages.push(msg.msg)
+        if (msg.from == this.name && msg.to == this.user) {
+          this.allMessages.push(msg)
+        } else if (msg.from == this.user && msg.to == this.name) {
+          this.allMessages.push(msg)
         }
       }
     }
@@ -58,7 +62,12 @@ export default {
       <p class="friend">{{ name }}</p>
 
       <div class="chat-common">
-        <p v-for="msg in messages">{{ msg }}</p>
+        <div class="one-message" v-for="msg in allMessages">
+          <p v-if="msg.from == user" class="from-messages to-messages">
+            {{ msg.msg }}
+          </p>
+          <p v-else class="from-messages">{{ msg.msg }}</p>
+        </div>
       </div>
       <!-- message -->
     </div>
@@ -98,6 +107,8 @@ export default {
   overflow: scroll;
   margin-top: 1vh;
   border-radius: 1vh;
+  display: flex;
+  flex-direction: column;
 }
 .friend {
   text-align: center;
@@ -131,15 +142,23 @@ export default {
   font-size: 18px;
   cursor: pointer;
 }
+.one-message {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(50, 50, 50);
+}
 
-.chat-common p {
+.from-messages {
   height: max-content;
   width: max-content;
   border: 2vh solid rgb(221, 221, 221);
   border-radius: 10px;
   background-color: rgb(221, 221, 221);
-  margin: 1vw;
+  margin: 1vh;
   font-size: 18px;
   font-family: Arial, Helvetica, sans-serif;
+}
+.to-messages {
+  align-self: flex-end;
 }
 </style>

@@ -1,5 +1,5 @@
 <script>
-import Chat from './chat.vue'
+import Chat from '@/components/chat.vue'
 
 export default {
   components: {
